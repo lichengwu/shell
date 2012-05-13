@@ -1,0 +1,22 @@
+#!/bin/bash
+#Use ping check ip state.
+#2012/05/13 lichengwu
+
+# simple test ip address
+testip=$( echo $1 | grep -e '\([0-9]\{1,3\}\.\)\{2\}[0-9]\{1,3\}' )
+# verify parameters
+if [ "$testip" = "" ] || [ $# -lt 3 ]; then
+    echo "error ip prefix...."
+    echo "usage: $0 ip_prefix from to"
+    exit 1
+fi
+# ping the ip
+for end_ip in $( seq $2 $3 )
+do
+    ping -c 1 -w 1 $1.$end_ip &> /dev/null && result=0 || result=1
+    if [ "$result" = 0 ]; then
+        echo "IP $1.$end_ip is UP"
+    else
+        echo "IP $1.$end_ip is DOWN"
+    fi
+done
