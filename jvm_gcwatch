@@ -1,0 +1,13 @@
+#!/bin/bash
+# use for watch GC from JVM
+# 2012/05/29 lichengwu
+if [ "$1" = "" ]; then
+    echo "please add filter or appKey to you parameter..."
+    exit 1
+fi
+pid=$(jps -v | grep "$1" | awk -F ' ' '{print $1}')
+if [ "$pid" = "" ]; then
+    echo "can not find you JVM..."
+    exit 1
+fi
+watch -n 1 jstat -gcutil $pid
