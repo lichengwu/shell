@@ -1,0 +1,42 @@
+#backup file
+#2013/01/06 lichengwu
+
+#prepare
+
+DEST_DIR='/Volumes/Gaara'
+if [ ! -d "$DEST_DIR" ]; then
+	echo 'please prepare you HD.'
+	exit 0
+fi
+
+echo 'prepare /etc/hosts'
+cp -f /etc/hosts  /Users/lichengwu/Dropbox/document/config/linux/
+echo 'prepare home...'
+find /Users/lichengwu -maxdepth 1 ! -name ".m2" ! -name '.Trash' -iname ".*" -exec cp -rf {} /Users/lichengwu/Dropbox/document/config/linux/home/ \; 1>/dev/null
+
+#command
+sync_cmd='rsync --recursive --checksum --delete --verbose '
+
+#sync Dropbox
+echo 'backup Dropbox...'
+cmd=${sync_cmd}'/Users/lichengwu/Dropbox /Volumes/Gaara/Dropbox'
+eval $cmd
+echo 'Dropbox backup finished.'
+
+#sync soft
+echo 'backup soft...'
+cmd=${sync_cmd}'/Users/lichengwu/soft /Volumes/Gaara/setup/soft/mac/soft'
+eval $cmd
+echo 'soft backup finished.'
+
+#sync data
+echo 'backup data...'
+cmd=${sync_cmd}'/Users/lichengwu/data/* /Volumes/Gaara/meituan/'
+eval $cmd
+echo 'data backup finished.'
+
+#sync maven
+echo 'backup maven repository... '
+cmd=${sync_cmd}'/Users/lichengwu/.m2/* /Volumes/Gaara/data/maven'
+eval $cmd
+echo 'Dropbox backup finished.'
