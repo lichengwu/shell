@@ -19,19 +19,19 @@ sync_cmd='rsync --recursive --checksum --delete --verbose '
 
 #sync Dropbox
 echo 'backup Dropbox...'
-cmd=${sync_cmd}'/Users/lichengwu/Dropbox /Volumes/Gaara/Dropbox'
+cmd=${sync_cmd}'/Users/lichengwu/Dropbox /Volumes/Gaara/'
 eval $cmd
 echo 'Dropbox backup finished.'
 
 #sync soft
 echo 'backup soft...'
-cmd=${sync_cmd}'/Users/lichengwu/soft /Volumes/Gaara/setup/soft/mac/soft'
+cmd=${sync_cmd}'/Users/lichengwu/soft /Volumes/Gaara/setup/soft/mac/'
 eval $cmd
 echo 'soft backup finished.'
 
 #sync data
 echo 'backup data...'
-cmd=${sync_cmd}'/Users/lichengwu/data/* /Volumes/Gaara/meituan/'
+cmd=${sync_cmd}'/Users/lichengwu/data/* /Volumes/Gaara/data/meituan/'
 eval $cmd
 echo 'data backup finished.'
 
