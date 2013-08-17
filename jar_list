@@ -1,0 +1,5 @@
+#!/bin/bash
+# use for watch GC from JVM
+# 2013/08/17 ichengwu
+
+jar -vtf $1
