@@ -1,0 +1,181 @@
+#!/bin/bash
+# 
+# svn utils
+#
+# @Usage
+#   $ isvn [options]
+#
+# @created 2014-01-25
+# @author lichengwu
+
+
+PROG=`basename $0`
+
+usage() {
+	 cat <<EOF
+Usage: ${PROG} [options]
+Subversion utils.
+	Options:
+	bl - list all branches in current repository
+	sb [branch] - switch to [branche], the [branche] can be a regexp. 
+                  If it match more than one branches, a selector will display.
+                  If the branch is trunk, it will create new branch from trunk.
+	t - switch to trunk
+	nb [from] [to] - create new branch [to] from [from]
+
+Example:
+    ${PROG} bl
+    ${PROG} t
+    ${PROG} sb a.*
+    ${PROG} nb trunk test
+    ${PROG} help
+	
+EOF
+    exit $1
+}
+
+pre() {
+	svn_url=`svn info | grep '^URL' | awk '{print $2}'`
+	app_name=`echo "$svn_url" | awk -F'/' '{print $5}'`
+	base_url=`echo "$svn_url" | awk -F'repos' '{print $1}'`repos/$app_name
+}
+
+check() {
+	svn_dir=`pwd`
+	if [ ! -d ${svn_dir}/.svn ];then
+		echo "[ERROR]:$svn_dir is not a svn work dir!"
+		exit 1
+	fi
+}
+
+
+debug() {
+	echo "svn_url:$svn_url"
+	echo "app:$app_name"
+	echo "base_url:$base_url"
+}
+
+case $1 in 
+
+	help)
+	usage
+	;;
+	
+	debug)
+	pre
+	echo "[debug model]"
+	debug
+	;;
+
+	t)
+	pre
+	check
+	trunk="$base_url/trunk/$app_name"
+	echo "[switch to trunk]:$trunk"
+	svn sw "$trunk"
+
+	;;
+
+	sb)
+	pre
+	check
+	branch_url="$base_url/branches"
+	branches=`svn ls "$branch_url" | egrep "$2" 2>&1`
+
+
+	if [ -z "$branches" ];then
+		echo "[ERROR] no branches match $2"
+		exit 1
+	fi
+
+	n_br=`echo "$branches" | wc -l 2>&1`
+
+	br_name="$branches"
+	
+	if [ $n_br -gt 1 ];then
+		count=1
+		for s in ${branches[@]} 
+		do 
+			echo "$count : $s"
+			let count=$count+1
+		done 
+		read -p "please select a branche number:" bn
+	
+		if [[ $bn =~ ^[0-9]+$ ]] && [ $bn -le $n_br ] && [ $bn -gt 0 ];then
+			i=1
+			for br in ${branches[@]} 
+			do 
+				if [ $i -eq $bn ];then
+					br_name="$br"
+					break
+				fi
+				let i=$i+1
+			done 
+		else 
+			echo "[ERROR] branche number error:$bn"
+		fi
+	fi
+
+	br_name="$base_url/branches/${br_name}$app_name"
+	echo "[switch to branche]:$br_name"
+	svn sw "$br_name"
+
+	;;
+
+	bl)
+	pre
+	check
+	echo "[listing branches]......"
+	svn ls "${base_url}/branches"
+	
+	;;
+
+	nb)
+	pre
+	check
+
+	if [ -z $2 ] || [ -z $3 ];then
+		usage
+		exit 1
+	fi
+	
+	read -p "create new branch [$3] from [$2]? y/n:" cf
+
+	if  [ "$cf" = "y" ];then
+		v=`svn info "$br_name" | grep "^Revision" | awk '{print $2}'`
+		new_name="v${v}_$3_`date +%Y%m%d`"
+		exists=`svn ls "$branch_url" | grep -w "$new_name" | wc -l 2>&1`
+		# check new branch exists
+		if [ "$exists" -eq 1 ];then
+			echo "[ERROR] branch v${v}_$3_`date +%Y%m%d` exists!"
+			exit 1
+		fi
+		# copy from trunk
+		if [ $2 = "trunk" ];then
+			br_name="$base_url/$2/$app_name"
+		# copy from branch
+		else
+			branch_url="$base_url/branches"
+			# check old branches exists
+   			exists=`svn ls "$branch_url" | grep -w "$2" | wc -l 2>&1`
+			if [ "$exists" -eq 0 ];then
+				echo "[ERROR] no branch named $2"
+				exit 1
+			fi
+			br_name="$base_url/branches/$2/$app_name"
+		fi	
+		nb_name="$base_url/branches/$new_name/"
+		echo "[creating]:$nb_name"
+		svn mkdir "$nb_name" -m "new branches isvn"
+		echo "[copying]:$br_name"
+		svn copy "$br_name" "$nb_name" -m "copy code"
+		echo "[switching]:$nb_name"
+		svn sw "${nb_name}${app_name}"
+		echo "==================DONE==================="
+		svn info
+	fi
+	;;
+	
+esac
+exit 0
+
