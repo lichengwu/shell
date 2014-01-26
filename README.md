@@ -7,7 +7,7 @@
 * 分支列表
 * 从任意分支(主干)创建新分支
 
-*这个工具只适用与淘宝svn仓库，svn地址类似：http://svn.app.taobao.net/repos/atm/trunk/atm*
+*这个工具只适用与淘宝svn仓库，svn地址类似：http://svn.app.taobao.net/repos/xxx/trunk/xxx*
 
 ### 用法
 
@@ -29,9 +29,23 @@ Example:
     isvn sb a.*
     isvn nb trunk test
     isvn help
+```
 
+## ping-range
+这个工具用来检查一个ip范围是否可以ping通
+### 用法
+
+```shell
+./ping-range 192.168.1 100 105
+IP 192.168.1.100 is UP
+IP 192.168.1.101 is DOWN
+IP 192.168.1.102 is UP
+IP 192.168.1.103 is UP
+IP 192.168.1.104 is DOWN
+IP 192.168.1.105 is DOWN
 
 ```
+
 
 
 
