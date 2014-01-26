@@ -46,6 +46,20 @@ IP 192.168.1.105 is DOWN
 
 ```
 
+## jvm_gcwatch 
+查看JVM的GC情况，没1s刷新一次。
+
+### 用法
+
+    ./jvm_gcwatch [features]
+    
+    Every 1.0s: jstat -gcutil 23884                                                Sun Jan 26 22:16:19 2014
+
+    S0     S1     E      O      P     YGC     YGCT    FGC    FGCT     GCT
+    4.15   0.00  44.78  40.13  71.69  16680  136.225   124   11.770  147.995
+
+
+features 为jvm进程相关的字符串或者pid。
 
 
 
