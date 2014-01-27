@@ -1,5 +1,5 @@
 #!/bin/bash
-# use for watch GC from JVM
+# find in *.jar files
 # 2013/08/17 ichengwu
 
 jar -vtf $1
