@@ -16,12 +16,12 @@ isvn help
 Usage: isvn [options]
 Subversion utils.
 	Options:
-	bl - list all branches in current repository
+	bl [regex] - list branches match the regex in current repository. If no regex, list all branches
 	sb [branch] - switch to [branche], the [branche] can be a regexp. 
                   If it match more than one branches, a selector will display.
                   If the branch is trunk, it will create new branch from trunk.
 	t - switch to trunk
-	nb [from] [to] - create new branch [to] from [from]
+	nb [from] [to] - create new branch [to] from [from]. If [from] is "trunk", copy code from trunk.
 
 Example:
     isvn bl
@@ -29,6 +29,7 @@ Example:
     isvn sb a.*
     isvn nb trunk test
     isvn help
+
 ```
 
 ## ping-range
