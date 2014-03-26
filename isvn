@@ -11,23 +11,24 @@
 
 PROG=`basename $0`
 
+
 usage() {
 	 cat <<EOF
 Usage: ${PROG} [options]
 Subversion utils.
 	Options:
-	bl [regex] - list branches match the regex in current repository. If no regex, list all branches
-	sb [branch] - switch to [branche], the [branche] can be a regexp. 
+	br [regex] - list branches match the regex in current repository. If no regex, list all branches
+	sw [branch] - switch to [branche], the [branche] can be a regexp. 
                   If it match more than one branches, a selector will display.
                   If the branch is trunk, it will create new branch from trunk.
 	t - switch to trunk
-	nb [from] [to] - create new branch [to] from [from]. If [from] is "trunk", copy code from trunk.
+	nbr [from] [to] - create new branch [to] from [from]. If [from] is "trunk", copy code from trunk.
 
 Example:
-    ${PROG} bl
+    ${PROG} br
     ${PROG} t
-    ${PROG} sb a.*
-    ${PROG} nb trunk test
+    ${PROG} sw a.*
+    ${PROG} nbr trunk test
     ${PROG} help
 	
 EOF
@@ -76,7 +77,7 @@ case $1 in
 
 	;;
 
-	sb)
+	sw)
 	pre
 	check
 	branch_url="$base_url/branches"
@@ -122,7 +123,7 @@ case $1 in
 
 	;;
 
-	bl)
+	br)
 	pre
 	check
 	echo "[listing branches]......"
@@ -130,7 +131,7 @@ case $1 in
 	
 	;;
 
-	nb)
+	nbr)
 	pre
 	check
 
@@ -175,6 +176,10 @@ case $1 in
 		svn info
 	fi
 	;;
+
+
+	*)
+	svn $@
 	
 esac
 exit 0
